@@ -108,12 +108,13 @@ def run(id: int):
     else:
         folder_name = "unkown"
 
-    if not os.path.exists(f"{FILE_SAVE_LOCATION}/{folder_name}"):
-        os.mkdir(f"{FILE_SAVE_LOCATION}/{folder_name}")
+    folder = os.path.join(FILE_SAVE_LOCATION, folder_name)
+    if not os.path.exists(folder):
+        os.mkdir(folder)
 
     try:
-        save_img(img_link, f"{FILE_SAVE_LOCATION}/{folder_name}/{id}.png")
-        save_tags(tags, f"{FILE_SAVE_LOCATION}/{folder_name}/{id}.txt")
+        save_img(img_link, os.path.join(folder, f"{id}.png"))
+        save_tags(tags, os.path.join(folder, f"{id}.txt"))
     except Exception as e:
         logging.error(f"id: {id} save file error: {repr(e)}.")
         return

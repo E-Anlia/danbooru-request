@@ -104,7 +104,7 @@ class NaturalTagger:
             if os.path.isdir(abs_path):
                 self.gen(abs_path)
 
-            parent_name = os.path.dirname(abs_path).split("/").pop()
+            parent_name = os.path.split(os.path.dirname(abs_path))[-1]
 
             if f_name.lower().endswith(".png"):
                 txt_path = os.path.join(
@@ -173,8 +173,8 @@ class NaturalTagger:
                 # logging.info(f"Processed output sample: {output_text[:100]}...")
 
                 # 保存处理后的文本
-                parent_name = os.path.dirname(batch_files[idx]).split("/").pop()
-                file_name = batch_files[idx].split("/").pop()
+                parent_name = os.path.split(os.path.dirname(batch_files[idx]))[-1]
+                file_name = os.path.split(batch_files[idx])[-1]
 
                 txt_path = os.path.join(
                     OUTPUT_FOLDER, parent_name, file_name[:-3] + "txt"
