@@ -10,6 +10,7 @@ from typing import List
 
 from washer import remove_metadata
 
+
 DOMAIN = "danbooru.donmai.us"
 PROTOCOL = "https"
 
@@ -92,6 +93,7 @@ def run(id: int):
                 class_="search-tag"
             )
         ]
+        tags = set(tags)
     except Exception as e:
         logging.error(f"id: {id} html parse error: {repr(e)}.")
         return
