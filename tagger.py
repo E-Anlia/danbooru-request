@@ -179,6 +179,7 @@ class NaturalTagger:
                 txt_path = os.path.join(
                     OUTPUT_FOLDER, parent_name, file_name[:-3] + "txt"
                 )
+                os.makedirs(os.path.join(OUTPUT_FOLDER, parent_name), exist_ok=True)
 
                 with open(txt_path, "w", encoding="utf-8", newline="") as f:
                     f.write(output_text)  # 直接写入未处理的原始文本
