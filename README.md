@@ -11,3 +11,8 @@ python main.py
 ```
 python washer.py
 ```
+
+## 自然语言打标
+```
+python tagger.py
+```
