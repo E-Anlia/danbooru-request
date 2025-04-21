@@ -14,7 +14,8 @@ from washer import remove_metadata
 DOMAIN = "danbooru.donmai.us"
 PROTOCOL = "https"
 
-FILE_SAVE_LOCATION = "./data"
+FILE_SAVE_LOCATION = "./data/dataset"
+os.makedirs(FILE_SAVE_LOCATION, exist_ok=True)
 
 MAX_RES = 2048 * 2048
 

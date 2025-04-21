@@ -19,7 +19,7 @@ def recursive_search(path: str):
         if os.path.isdir(file_path):
             recursive_search(file_path)
 
-        if os.path.isfile(file_path) and file_path.endswith("png"):
+        if os.path.isfile(file_path) and file_path.lower().endswith("png"):
             img = Image.open(file_path)
             img = remove_metadata(img)
             img.save(file_path, "png")
