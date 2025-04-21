@@ -2,6 +2,7 @@
 from PIL import ImageFile, Image
 import os
 
+
 def remove_metadata(img: ImageFile.ImageFile):
     """移除图片metadata"""
     data = list(img.getdata())
