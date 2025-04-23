@@ -48,7 +48,7 @@ def save_img(link: str, path: str):
     img = Image.open(io.BytesIO(file_content))
     img = remove_metadata(img)
     img = compress_img(img)
-    img.save(path, TARGET_FORMAT)
+    img.save(f"{path}.{TARGET_FORMAT}", TARGET_FORMAT)
 
 
 def save_tags(tags: List[str], path: str):
