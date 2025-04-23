@@ -1,9 +1,11 @@
 # coding=utf-8
-from PIL import ImageFile, Image
+from PIL import Image
 import os
 
+FILE_FORMAT = "png"  # 图片格式
 
-def remove_metadata(img: ImageFile.ImageFile):
+
+def remove_metadata(img: Image.Image) -> Image.Image:
     """移除图片metadata"""
     data = list(img.getdata())
     image_without_exif = Image.new(img.mode, img.size)
@@ -19,10 +21,10 @@ def recursive_search(path: str):
         if os.path.isdir(file_path):
             recursive_search(file_path)
 
-        if os.path.isfile(file_path) and file_path.lower().endswith("png"):
+        if os.path.isfile(file_path) and file_path.lower().endswith(FILE_FORMAT):
             img = Image.open(file_path)
             img = remove_metadata(img)
-            img.save(file_path, "png")
+            img.save(file_path, FILE_FORMAT)
 
 
 if __name__ == "__main__":

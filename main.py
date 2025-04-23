@@ -5,8 +5,9 @@ import logging
 import os
 import io
 import math
-from PIL import Image, ImageFile
+from PIL import Image
 from typing import List
+from collections import OrderedDict
 
 from washer import remove_metadata
 
@@ -14,13 +15,15 @@ from washer import remove_metadata
 DOMAIN = "danbooru.donmai.us"
 PROTOCOL = "https"
 
-FILE_SAVE_LOCATION = "./data/dataset"
+FILE_SAVE_LOCATION = "./data/dataset"  # 图片保存位置
 os.makedirs(FILE_SAVE_LOCATION, exist_ok=True)
 
 MAX_RES = 2048 * 2048
 
 LATEST_ID = 9182170  # 最后图片在danbooru上的id
 MAX_ID = 9182175  # 最大id
+
+TARGET_FORMAT = "png"  # 保存图片格式
 
 logging.basicConfig(
     level=logging.INFO,
@@ -30,7 +33,7 @@ logging.basicConfig(
 )
 
 
-def compress_img(img: ImageFile.ImageFile):
+def compress_img(img: Image.Image) -> Image.Image:
     """压缩图片"""
     res = img.width * img.height
     if res <= MAX_RES:
@@ -45,7 +48,7 @@ def save_img(link: str, path: str):
     img = Image.open(io.BytesIO(file_content))
     img = remove_metadata(img)
     img = compress_img(img)
-    img.save(path, "png")
+    img.save(path, TARGET_FORMAT)
 
 
 def save_tags(tags: List[str], path: str):
@@ -94,7 +97,7 @@ def run(id: int):
                 class_="search-tag"
             )
         ]
-        tags = set(tags)
+        tags = list(OrderedDict.fromkeys(tags))  # 去重
     except Exception as e:
         logging.error(f"id: {id} html parse error: {repr(e)}.")
         return
@@ -113,7 +116,7 @@ def run(id: int):
         os.mkdir(folder)
 
     try:
-        save_img(img_link, os.path.join(folder, f"{id}.png"))
+        save_img(img_link, os.path.join(folder, f"{id}"))
         save_tags(tags, os.path.join(folder, f"{id}.txt"))
     except Exception as e:
         logging.error(f"id: {id} save file error: {repr(e)}.")
