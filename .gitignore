@@ -7,3 +7,4 @@ data/
 *.yml
 *.yaml
 !example.yml
+models/

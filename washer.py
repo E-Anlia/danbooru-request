@@ -15,7 +15,7 @@ class WasherConfig:
             conf = conf.get("washer")
             self.location = conf["location"]
             self.target_format = conf["target_format"]
-            self.filter_format = conf["filter_format"]
+            self.filter_format = tuple(conf["filter_format"])
 
     def __str__(self):
         return f"{self.__class__.__name__}:{self.__dict__}"

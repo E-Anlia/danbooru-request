@@ -22,3 +22,15 @@ tagger:
   output_folder: "./data/ntags"
   batch_size: 2
   overwrite: false
+
+bbox:
+  image_folder: "./data/dataset"
+  txt_folder: "./data/dataset"
+  model_path: "./models/yolov8m.pt"
+  nlp_out: "./output/nlp"
+  tag_out: "./output/tag"
+  filter_format: # 处理哪些格式的图片
+  - "png"
+  - "jpg"
+  - "jpeg"
+  - "webp"

@@ -9,6 +9,7 @@ from PIL import Image
 from typing import List
 from collections import OrderedDict
 import yaml
+from pathlib import Path
 
 from washer import remove_metadata
 
@@ -33,7 +34,7 @@ class SpiderConfig:
             if self.max_id < self.latest_id:
                 raise ValueError("max_id must be larger than latest_id")
 
-        os.makedirs(self.save_location, exist_ok=True)
+            Path(self.save_location).mkdir(parents=True, exist_ok=True)
 
     def __str__(self):
         return f"{self.__class__.__name__}:{self.__dict__}"
