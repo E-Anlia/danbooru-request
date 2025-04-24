@@ -52,14 +52,19 @@ class PersonDetector:
         使用 BBOX 模型检测画面中人物，返回最主要人物的边界框
         # TODO: 没检测到人物
         """
+        logging.info(f"Trying detecting {image_path}")
         results = self.YOLO(image_path)
         # 过滤出 'person' 类别
         persons = [r for r in results[0].boxes if int(r.cls) == 0]
         if not persons:
             logging.error(f"No person detected in {image_path}")
+            return
+
         # 取最大 bbox
         box = max(persons, key=lambda b: b.xyxy[0][2] * b.xyxy[0][3])
         x1, y1, x2, y2 = map(int, box.xyxy[0])
+
+        logging.info(f"Person detected in {image_path}, {[x1, y1, x2, y2]}")
         return x1, y1, x2, y2
 
     def compute_grid_cell(
@@ -109,7 +114,7 @@ class PersonDetector:
     # 第四步：输出最终 txt 并清理原始 -->
     def write_final_tags(self, out_path: str, tags: List[str]):
         with open(out_path, "w", encoding="utf-8") as f:
-            f.write(" ".join(tags))
+            f.write(",".join(tags))
 
     def recursive_search(self, path: str):
         """递归搜索文件夹里的图片"""
@@ -131,8 +136,13 @@ class PersonDetector:
 
         # 人物检测 & 网格位置
         bbox = pd.detect_person_bbox(img_path)
+        if bbox is None:
+            return
+
         img = Image.open(img_path)
         pos = pd.compute_grid_cell(img.size, bbox)
+
+        logging.info(f"Person pos: {pos} in {img_path}")
 
         # 自然语言打标 -->
         nlp_tags = pd.call_nlp_tagger(img_path, txt_src)
