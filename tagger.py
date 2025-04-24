@@ -4,12 +4,27 @@ import torch
 from transformers import Qwen2VLForConditionalGeneration, Qwen2VLProcessor
 from qwen_vl_utils import process_vision_info
 import logging
+import yaml
 
-MODEL_PATH = r"D:\stablediffusion\ToriiGate打标器\ToriiGate-v0.4-7B"
-IMAGE_FOLDER = "./data/dataset"
-OUTPUT_FOLDER = "./data/ntags"
-BATCH_SIZE = 2
-OVERWRITE = False
+
+class TaggerConfig:
+
+    def __init__(self):
+        with open("./config.yml", "r") as f:
+            conf = yaml.safe_load(f)
+            if conf.get("tagger") is None:
+                raise FileNotFoundError("No config found for tagger")
+
+            conf = conf.get("tagger")
+            self.model_path = conf["model_path"]
+            self.image_folder = conf["image_folder"]
+            self.output_folder = conf["output_folder"]
+            self.batch_size = conf["batch_size"]
+            self.overwrite = conf["overwrite"]
+
+    def __str__(self):
+        return f"{self.__class__.__name__}:{self.__dict__}"
+
 
 logging.basicConfig(
     level=logging.INFO,
@@ -18,22 +33,24 @@ logging.basicConfig(
     format="%(asctime)s - %(pathname)s[line:%(lineno)d] - %(levelname)s: %(message)s",
 )
 
+_CONFIG = TaggerConfig()
+
 
 class NaturalTagger:
     """自然语言打标器"""
 
     def __init__(self):
         # 模型加载信息
-        logging.info(f"Loading ToriiGate-v0.4-7B model file from {MODEL_PATH}")
+        logging.info(f"Loading ToriiGate-v0.4-7B model file from {_CONFIG.model_path}")
         self.processor = Qwen2VLProcessor.from_pretrained(
-            MODEL_PATH,
+            _CONFIG.model_path,
             min_pixels=256 * 28 * 28,
             max_pixels=768 * 28 * 28,
             padding_side="left",
             use_fast=True,
         )
         self.model = Qwen2VLForConditionalGeneration.from_pretrained(
-            MODEL_PATH,
+            _CONFIG.model_path,
             torch_dtype=torch.bfloat16,
             device_map="cuda:0",
         ).eval()
@@ -108,15 +125,15 @@ class NaturalTagger:
 
             if f_name.lower().endswith(".png"):
                 txt_path = os.path.join(
-                    OUTPUT_FOLDER, parent_name, f_name[:-3] + "txt"
+                    _CONFIG.output_folder, parent_name, f_name[:-3] + "txt"
                 )  # 图片同名txt文件
-                if not os.path.exists(txt_path) or OVERWRITE:
+                if not os.path.exists(txt_path) or _CONFIG.overwrite:
                     image_files.append(abs_path)
                 else:
                     logging.info(f"skip existed: {txt_path}")
 
-        for i in range(0, len(image_files), BATCH_SIZE):
-            batch_files = image_files[i : i + BATCH_SIZE]
+        for i in range(0, len(image_files), _CONFIG.batch_size):
+            batch_files = image_files[i : i + _CONFIG.batch_size]
             texts = []
             images = []
 
@@ -177,9 +194,11 @@ class NaturalTagger:
                 file_name = os.path.split(batch_files[idx])[-1]
 
                 txt_path = os.path.join(
-                    OUTPUT_FOLDER, parent_name, file_name[:-3] + "txt"
+                    _CONFIG.output_folder, parent_name, file_name[:-3] + "txt"
                 )
-                os.makedirs(os.path.join(OUTPUT_FOLDER, parent_name), exist_ok=True)
+                os.makedirs(
+                    os.path.join(_CONFIG.output_folder, parent_name), exist_ok=True
+                )
 
                 with open(txt_path, "w", encoding="utf-8", newline="") as f:
                     f.write(output_text)  # 直接写入未处理的原始文本
@@ -190,4 +209,4 @@ class NaturalTagger:
 
 if __name__ == "__main__":
     with NaturalTagger() as tagger:
-        tagger.gen(IMAGE_FOLDER)
+        tagger.gen(_CONFIG.image_folder)

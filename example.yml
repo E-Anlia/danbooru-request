@@ -1,0 +1,24 @@
+spider:
+  domain: "danbooru.donmai.us"
+  protocol: "https"
+  file_save_location: "./data/dataset"  # 图片保存位置
+  max_res: 4194304 # 2048*2048
+  latest_id: 9182170  # 最后图片在danbooru上的id
+  max_id: 9182175  # 最大id
+  target_format: "webp"  # 保存图片格式
+
+washer:
+  filter_format: # 处理哪些格式的图片
+    - "png"
+    - "jpg"
+    - "jpeg"
+    - "webp"
+  target_format: "webp"  # 保存图片格式
+  location: "./data/dataset"  # 要清洗的图片保存位置
+
+tagger:
+  model_path: "D:/stablediffusion/ToriiGate打标器/ToriiGate-v0.4-7B"
+  image_folder: "./data/dataset"
+  output_folder: "./data/ntags"
+  batch_size: 2
+  overwrite: false
