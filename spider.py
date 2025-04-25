@@ -123,14 +123,17 @@ def run(id: int):
         f"id: {id}, artist: {artists}, tags count: {len(tags)}, link: {img_link}."
     )
 
-    if len(artists) >= 1:
-        folder_name = artists[0]
-    else:
-        folder_name = "unkown"
+    # 作者名为文件夹
+    folder_name = artists[0] if len(artists) > 0 else "unkown"
+
+    # 单人多人分文件夹
+    # if "solo" in tags:
+    #     folder_name = "single_person"
+    # else:
+    #     folder_name = "multi_person"
 
     folder = os.path.join(_CONFIG.save_location, folder_name)
-    if not os.path.exists(folder):
-        os.mkdir(folder)
+    Path(folder).mkdir(parents=True, exist_ok=True)
 
     try:
         save_img(img_link, os.path.join(folder, f"{id}"))
