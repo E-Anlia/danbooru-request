@@ -22,6 +22,11 @@ tagger:
   output_folder: "./data/ntags"
   batch_size: 2
   overwrite: false
+  filter_format: # 处理哪些格式的图片
+    - "png"
+    - "jpg"
+    - "jpeg"
+    - "webp"
 
 bbox:
   image_folder: "./data/dataset"
@@ -30,6 +35,16 @@ bbox:
   nlp_out: "./output/nlp"
   tag_out: "./output/tag"
   filter_format: # 处理哪些格式的图片
+    - "png"
+    - "jpg"
+    - "jpeg"
+    - "webp"
+
+scorer:
+  batch_size: 256
+  model_path: "./models/scorer.safetensors"
+  image_folder: "./data/dataset"
+  filter_format:
     - "png"
     - "jpg"
     - "jpeg"

@@ -21,6 +21,7 @@ class TaggerConfig:
             self.output_folder = conf["output_folder"]
             self.batch_size = conf["batch_size"]
             self.overwrite = conf["overwrite"]
+            self.filter_format = tuple(conf["filter_format"])
 
     def __str__(self):
         return f"{self.__class__.__name__}:{self.__dict__}"
@@ -110,22 +111,24 @@ class NaturalTagger:
     #     else:
     #         return base_prompt
 
-    def gen(self, base_folder: str):
+    def run(self, base_folder: str):
         # ====== 修改文件列表生成逻辑（核心修复点） ======
         image_files = []
+        base_folder = os.path.abspath(base_folder)
 
         for f_name in os.listdir(base_folder):
             abs_path = os.path.join(base_folder, f_name)
 
             # 递归子文件夹
             if os.path.isdir(abs_path):
-                self.gen(abs_path)
+                self.run(abs_path)
+                continue
 
             parent_name = os.path.split(os.path.dirname(abs_path))[-1]
 
-            if f_name.lower().endswith(".png"):
+            if f_name.lower().endswith(_CONFIG.filter_format):
                 txt_path = os.path.join(
-                    _CONFIG.output_folder, parent_name, f_name[:-3] + "txt"
+                    _CONFIG.output_folder, parent_name, f_name.split(".")[0] + ".txt"
                 )  # 图片同名txt文件
                 if not os.path.exists(txt_path) or _CONFIG.overwrite:
                     image_files.append(abs_path)
@@ -209,4 +212,4 @@ class NaturalTagger:
 
 if __name__ == "__main__":
     with NaturalTagger() as tagger:
-        tagger.gen(_CONFIG.image_folder)
+        tagger.run(_CONFIG.image_folder)
