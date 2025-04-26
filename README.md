@@ -18,3 +18,8 @@ python washer.py
 ```
 python tagger.py
 ```
+
+## 质量打标
+```
+python scorer.py
+```
