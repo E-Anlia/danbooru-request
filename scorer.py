@@ -1,5 +1,4 @@
 import os
-import re
 from waifuset import WaifuScorer as WScorer
 from PIL import Image
 import yaml

@@ -50,6 +50,23 @@ logging.basicConfig(
 _CONFIG = SpiderConfig()
 
 
+def has_transparency(img: Image.Image):
+    """检查图片是否有透明"""
+    if img.info.get("transparency", None) is not None:
+        return True
+    if img.mode == "P":
+        transparent = img.info.get("transparency", -1)
+        for _, index in img.getcolors():
+            if index == transparent:
+                return True
+    elif img.mode == "RGBA":
+        extrema = img.getextrema()
+        if extrema[3][0] < 255:
+            return True
+
+    return False
+
+
 def compress_img(img: Image.Image) -> Image.Image:
     """压缩图片"""
     res = img.width * img.height
@@ -63,6 +80,12 @@ def save_img(link: str, path: str):
     """保存图片"""
     file_content = requests.get(link).content
     img = Image.open(io.BytesIO(file_content))
+
+    if has_transparency(img):
+        img = Image.alpha_composite(
+            Image.new("RGBA", img.size, "WHITE"), img.convert("RGBA")
+        )
+
     img = remove_metadata(img)
     img = compress_img(img)
     img.save(f"{path}.{_CONFIG.target_format}", _CONFIG.target_format, lossless=True)
@@ -95,18 +118,22 @@ def run(id: int):
             img_link = orig_link_node["href"]
         else:
             img_link = (
-                content.find(id="image")["src"]
+                content.find("img", id="image")["src"]
                 .replace("sample-", "")
                 .replace("/sample/", "/original/")
             )
 
         # 作者
-        artists = [
-            node.text
-            for node in content.find("ul", class_="artist-tag-list").find_all(
-                class_="search-tag"
-            )
-        ]
+        _artist_nodes = content.find("ul", class_="artist-tag-list")
+        if _artist_nodes:
+            artists = [
+                node.text
+                for node in content.find("ul", class_="artist-tag-list").find_all(
+                    class_="search-tag"
+                )
+            ]
+        else:
+            artists = []
         # 标签
         tags = [
             node.text.replace("_", " ")
@@ -115,6 +142,11 @@ def run(id: int):
             )
         ]
         tags = list(OrderedDict.fromkeys(tags))  # 去重
+
+        # 去除透明背景标签
+        if tags.index("transparent background") != -1:
+            tags[tags.index("transparent background")] = "white background"
+
     except Exception as e:
         logging.error(f"id: {id} html parse error: {repr(e)}.")
         return
