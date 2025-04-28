@@ -86,7 +86,13 @@ class NaturalTagger:
 
     def load_tags(self, image_path):
         """从txt加载tag"""
+<<<<<<< HEAD
         tags_path = os.path.splitext(image_path)[0] + ".txt"
+=======
+        #tags_path = image_path[:-4] + "txt"
+        base_name = os.path.splitext(image_path)[0]
+        tags_path = base_name + ".txt"
+>>>>>>> 2815e00615f5fd00194c07dfdaae659858c208ea
 
         if not os.path.exists(tags_path):
             logging.error(f"tags not exists for {image_path}")
