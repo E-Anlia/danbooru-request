@@ -36,7 +36,7 @@ _CONFIG = ScorerConfig()
 
 class WaifuScorer:
     def __init__(self):
-        self.scorer = WScorer(model_path=_CONFIG.model_path, emb_cache_dir=None)
+        self.scorer = WScorer.from_pretrained(pretrained_model_name_or_path=_CONFIG.model_path, emb_cache_dir=None)
 
     def get_score(self, images: List[Image.Image]):
         # 批量评分
