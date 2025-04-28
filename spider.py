@@ -144,7 +144,7 @@ def run(id: int):
         tags = list(OrderedDict.fromkeys(tags))  # 去重
 
         # 去除透明背景标签
-        if tags.index("transparent background") != -1:
+        if "transparent background" in tags:
             tags[tags.index("transparent background")] = "white background"
 
     except Exception as e:
