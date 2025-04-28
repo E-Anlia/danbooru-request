@@ -86,13 +86,7 @@ class NaturalTagger:
 
     def load_tags(self, image_path):
         """从txt加载tag"""
-<<<<<<< HEAD
         tags_path = os.path.splitext(image_path)[0] + ".txt"
-=======
-        #tags_path = image_path[:-4] + "txt"
-        base_name = os.path.splitext(image_path)[0]
-        tags_path = base_name + ".txt"
->>>>>>> 2815e00615f5fd00194c07dfdaae659858c208ea
 
         if not os.path.exists(tags_path):
             logging.error(f"tags not exists for {image_path}")
@@ -203,7 +197,9 @@ class NaturalTagger:
                 file_name = os.path.split(batch_files[idx])[-1]
 
                 txt_path = os.path.join(
-                    _CONFIG.output_folder, parent_name, file_name[:-3] + "txt"
+                    _CONFIG.output_folder,
+                    parent_name,
+                    os.path.splitext(file_name)[0] + ".txt",
                 )
                 os.makedirs(
                     os.path.join(_CONFIG.output_folder, parent_name), exist_ok=True
