@@ -2,7 +2,6 @@ pillow==11.2.1
 beautifulsoup4==4.13.4
 requests==2.32.3
 pyyaml==6.0.2
-waifuset @ git+https://github.com/Eugeoter/waifuset.git@v2
+waifuset==0.2.13
 clip @ git+https://github.com/openai/CLIP.git@dcba3cb2e2827b402d2701e7e1c7d9fed8a20ef1
 qwen-vl-utils==0.0.11
-lightning==2.5.1
