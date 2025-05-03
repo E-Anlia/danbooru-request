@@ -49,3 +49,7 @@ scorer:
     - "jpg"
     - "jpeg"
     - "webp"
+
+combine:
+  model_folder: "./models"
+  output_file: "./output/combined.safetensors"
